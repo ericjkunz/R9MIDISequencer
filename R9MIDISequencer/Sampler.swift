@@ -109,6 +109,26 @@ open class Sampler {
         }
     }
     
+    open func startNote(withNumber noteNumber: UInt8, veloctiy: UInt8, duration: Int) {
+        self.samplerNode.startNote(noteNumber, withVelocity: veloctiy, onChannel: self.channelNumber)
+        
+        let noteCommand: UInt8 = UInt8(0x90) + UInt8(self.channelNumber)
+        let message: [UInt8] = [noteCommand, UInt8(noteNumber), UInt8(127)]
+        self.sendMessage(message)
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(duration)) {
+            self.stopNoteWithNumber(noteNumber)
+        }
+    }
+    
+    open func startNote(withNumber noteNumber: UInt8, veloctiy: UInt8) {
+        self.samplerNode.startNote(noteNumber, withVelocity: veloctiy, onChannel: self.channelNumber)
+        
+        let noteCommand: UInt8 = UInt8(0x90) + UInt8(self.channelNumber)
+        let message: [UInt8] = [noteCommand, UInt8(noteNumber), UInt8(127)]
+        self.sendMessage(message)
+    }
+    
     open func startNoteWithNumber(_ noteNumber: UInt8) {
         self.samplerNode.startNote(noteNumber, withVelocity: 127, onChannel: self.channelNumber)
         
